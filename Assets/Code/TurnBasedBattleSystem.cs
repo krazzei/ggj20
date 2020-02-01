@@ -1,59 +1,82 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Code
 {
-    public class TurnBasedBattleSystem : MonoBehaviour
-    {
-        public Entity playerEntityPrefab;
-        
-        public Entity enemyEntityPrefab;
+	public class TurnBasedBattleSystem : MonoBehaviour
+	{
+		public Entity playerEntityPrefab;
 
-        public MenuController menuControllerPrefab;
-        private MenuController _menuController;
-        
-        public AiController aiControllerPrefab;
-        private AiController _aiController;
+		public Entity enemyEntityPrefab;
 
-        private readonly List<Entity> _entities = new List<Entity>();
-        private readonly List<IController> _controllers = new List<IController>();
-        private int _controllerIndex;
+		public MenuController menuControllerPrefab;
+		private MenuController _menuController;
 
-        private void Start()
-        {
-            var player = Instantiate(playerEntityPrefab);
-            var enemy = Instantiate(enemyEntityPrefab);
+		public AiController aiControllerPrefab;
+		private AiController _aiController;
 
-            _entities.Add(player);
-            _entities.Add(enemy);
+		private readonly List<Entity> _entities = new List<Entity>();
+		private readonly List<IController> _controllers = new List<IController>();
+		private int _controllerIndex;
+		private bool _stopBattle = false;
 
-            _menuController = Instantiate(menuControllerPrefab);
-            _menuController.SetControlledEntity(player);
+		// This can evolve into a next level, or maybe that will be scene based and we configure enemies and such
+		private void Start()
+		{
+			var player = Instantiate(playerEntityPrefab);
+			var enemy = Instantiate(enemyEntityPrefab);
 
-            _aiController = Instantiate(aiControllerPrefab);
-            _aiController.SetControlledEntity(enemy);
+			_entities.Add(player);
+			_entities.Add(enemy);
 
-            foreach (var entity in _entities)
-            {
-                _menuController.AddTargetEntity(entity);
-                _aiController.AddTargetEntity(entity);
-            }
+			enemy.OnDeath += GameOver;
+			enemy.OnFullHealth += Win;
 
-            _controllerIndex = 0;
-            _controllers.Add(_menuController);
-            _controllers.Add(_aiController);
-            _controllers[_controllerIndex].TakeTurn(NextTurn);
-        }
+			player.OnDeath += GameOver;
 
-        private void NextTurn()
-        {
-            if (++_controllerIndex >= _controllers.Count)
-            {
-                _controllerIndex = 0;
-            }
+			_menuController = Instantiate(menuControllerPrefab);
+			_menuController.SetControlledEntity(player);
 
-            _controllers[_controllerIndex].TakeTurn(NextTurn);
-        }
-    }
+			_aiController = Instantiate(aiControllerPrefab);
+			_aiController.SetControlledEntity(enemy);
+
+			foreach (var entity in _entities)
+			{
+				_menuController.AddTargetEntity(entity);
+				_aiController.AddTargetEntity(entity);
+			}
+
+			_controllerIndex = 0;
+			_controllers.Add(_menuController);
+			_controllers.Add(_aiController);
+			_controllers[_controllerIndex].TakeTurn(NextTurn);
+		}
+
+		private void GameOver()
+		{
+			Debug.Log("Game Over :(");
+			_stopBattle = true;
+		}
+
+		private void Win()
+		{
+			Debug.Log("You win!");
+			_stopBattle = true;
+		}
+
+		private void NextTurn()
+		{
+			if (_stopBattle)
+			{
+				return;
+			}
+			
+			if (++_controllerIndex >= _controllers.Count)
+			{
+				_controllerIndex = 0;
+			}
+
+			_controllers[_controllerIndex].TakeTurn(NextTurn);
+		}
+	}
 }

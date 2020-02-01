@@ -1,24 +1,46 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Code
 {
+	[RequireComponent(typeof(AudioSource))]
 	public class Entity : MonoBehaviour
 	{
 		private float _health;
-		
+		private AudioSource _source;
+
 		[SerializeField]
 		private byte maxHealth = 100;
-		
+
 		[SerializeField]
 		private byte healAmount = 10;
-		
+
 		[SerializeField]
 		private byte damageAmount = 10;
 
 		[SerializeField]
 		private byte startingHealth = 0;
 
+		[SerializeField]
+		private List<AudioClip> _healSounds = new List<AudioClip>();
+
+		[SerializeField]
+		private List<AudioClip> _attackSounds = new List<AudioClip>();
+		
+		[SerializeField]
+		private List<AudioClip> _damageSounds = new List<AudioClip>();
+
 		public string displayName;
+
+		public event Action OnDeath;
+		public event Action OnFullHealth;
+
+		private void Awake()
+		{
+			_source = GetComponent<AudioSource>();
+		}
 
 		private void Start()
 		{
@@ -28,6 +50,7 @@ namespace Code
 		public void HealTarget(Entity target)
 		{
 			Debug.Log($"{displayName} is healing {target.displayName}");
+			_source.PlayOneShot(_healSounds[Random.Range(0, _healSounds.Count)]);
 			target.TakeHeal(healAmount);
 		}
 
@@ -47,8 +70,9 @@ namespace Code
 			if (_health >= maxHealth)
 			{
 				_health = maxHealth;
-				//HealthFull();
+				OnFullHealth?.Invoke();
 			}
+
 			Debug.Log($"{displayName}'s health: {_health}");
 		}
 
@@ -58,12 +82,14 @@ namespace Code
 		/// <param name="amount"></param>
 		private void TakeDamage(byte amount)
 		{
+			_source.PlayOneShot(_damageSounds[Random.Range(0, _damageSounds.Count)]);
 			_health -= amount;
 			if (_health <= 0)
 			{
 				_health = 0;
-				//DoDeath();
+				OnDeath?.Invoke();
 			}
+
 			Debug.Log($"{displayName}'s health: {_health}");
 		}
 	}

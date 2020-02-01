@@ -30,7 +30,7 @@ namespace Code
 
 		private void DoTurn()
 		{
-			StartCoroutine(TurnAnimation());	
+			StartCoroutine(TurnAnimation());
 			_myEntity.DamageTarget(_myEntity);
 			// TODO: for AOE go through the _allEntities collection.
 		}

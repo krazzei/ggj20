@@ -31,13 +31,14 @@ namespace Code
 			_myEntity.HealTarget(target);
 			FinishTurn();
 		}
-		
+
 		public void TakeTurn(Action finishedTurn)
 		{
 			foreach (var button in _buttons)
 			{
 				button.gameObject.SetActive(true);
 			}
+
 			_finishedTurn = finishedTurn;
 		}
 
@@ -47,6 +48,7 @@ namespace Code
 			{
 				button.gameObject.SetActive(false);
 			}
+
 			_finishedTurn();
 		}
 	}
