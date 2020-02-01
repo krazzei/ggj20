@@ -156,6 +156,8 @@ MonoBehaviour:
     type: 3}
   menuControllerPrefab: {fileID: 3088671910759656104, guid: 07ac93d8a16404d1ebc51a11f1a47db9,
     type: 3}
+  aiControllerPrefab: {fileID: 1051709649800894059, guid: 817b719647d184d3f8cf9d096dc725f7,
+    type: 3}
 --- !u!4 &216177662
 Transform:
   m_ObjectHideFlags: 0
