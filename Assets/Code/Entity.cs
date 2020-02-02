@@ -233,6 +233,7 @@ namespace Code
 
 		private void QueueStatusEffect(StatusEffect effect)
 		{
+			StartCoroutine(PlayAnimationThenReturnToIdle(_hit));
 			_queuedEffects.Enqueue(effect.Clone());	
 		}
 

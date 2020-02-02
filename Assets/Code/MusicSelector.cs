@@ -24,7 +24,6 @@ namespace Code
 			_source.PlayOneShot(intro);
 			_source.clip = loop;
 			_source.loop = true;
-			Debug.Log(intro.length);
 			_source.PlayScheduled(AudioSettings.dspTime + intro.length);
 		}
 	}

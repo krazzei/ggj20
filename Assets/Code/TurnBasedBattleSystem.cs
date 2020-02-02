@@ -20,6 +20,8 @@ namespace Code
 
 		public Transform playerSpawnPoint;
 		public Transform enemySpawnPoint;
+
+		public EndGameScreen endGamePrefab;
 		
 		private readonly List<Entity> _entities = new List<Entity>();
 		private readonly List<IController> _controllers = new List<IController>();
@@ -65,11 +67,10 @@ namespace Code
 				new Vector2(-260, -40));
 			enemy.UpdateHealthPercent += enemyHealth.UpdateHealthPercent;
 
-			// foreach (var entity in _entities)
-			// {
-			// 	_menuController.AddTargetEntity(entity);
-			// 	_aiController.AddTargetEntity(entity);
-			// }
+			var enemyIcons = Instantiate(statusEffectIconsPrefab, _menuController.transform, false);
+			enemyIcons.SetPosition(new Vector2(1, 1), new Vector2(1, 1), new Vector2(-260, -100));
+			enemy.OnAddStatusEffect += enemyIcons.AddStatusEffect;
+			enemy.OnRemoveStatusEffect += enemyIcons.RemoveStatusEffect;
 
 			_controllerIndex = 0;
 			_controllers.Add(_menuController);
@@ -79,13 +80,15 @@ namespace Code
 
 		private void GameOver()
 		{
-			Debug.Log("Game Over :(");
+			var endGame = Instantiate(endGamePrefab, _menuController.transform, false);
+			endGame.message.text = "Game Over!";
 			_stopBattle = true;
 		}
 
 		private void Win()
 		{
-			Debug.Log("You win!");
+			var endGame = Instantiate(endGamePrefab, _menuController.transform, false);
+			endGame.message.text = "You Won!";
 			_stopBattle = true;
 		}
 
