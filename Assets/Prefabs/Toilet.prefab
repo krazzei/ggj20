@@ -403,7 +403,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   healAmount: 10
-  damageAmount: 10
+  damageAmount: 16
   startingHealth: 15
   debuffDamage:
     amount: -0.5

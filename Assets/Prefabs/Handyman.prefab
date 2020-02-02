@@ -1770,7 +1770,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 100
-  healAmount: 12
+  healAmount: 13
   damageAmount: 10
   startingHealth: 100
   debuffDamage:
@@ -1780,11 +1780,11 @@ MonoBehaviour:
     amount: 0.5
     duration: 3
   buffHeal:
-    amount: 0.5
+    amount: 0.6
     duration: 3
   shield:
-    amount: 0.5
-    duration: 3
+    amount: 1
+    duration: 2
   _healSounds:
   - {fileID: 8300000, guid: 30ec9e5642cd1490685753f092b463f2, type: 3}
   - {fileID: 8300000, guid: d760713fd8dc34bda814fc6f92efc369, type: 3}

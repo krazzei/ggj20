@@ -44,14 +44,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _attackTypes:
-  - type: 3
-    damageMultiplier: 1
+  - type: 0
+    damageMultiplier: 0.85
     weight: 0.5
   - type: 1
     damageMultiplier: 0.75
     weight: 0.25
   - type: 3
-    damageMultiplier: 1
+    damageMultiplier: 1.1
     weight: 0.2
   - type: 0
     damageMultiplier: 2
