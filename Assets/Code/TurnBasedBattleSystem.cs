@@ -18,6 +18,9 @@ namespace Code
 		public HealthBar healthBarPrefab;
 		public StatusEffectIcons statusEffectIconsPrefab;
 
+		public Transform playerSpawnPoint;
+		public Transform enemySpawnPoint;
+		
 		private readonly List<Entity> _entities = new List<Entity>();
 		private readonly List<IController> _controllers = new List<IController>();
 		private int _controllerIndex;
@@ -26,8 +29,8 @@ namespace Code
 		// This can evolve into a next level, or maybe that will be scene based and we configure enemies and such
 		private void Start()
 		{
-			var player = Instantiate(playerEntityPrefab);
-			var enemy = Instantiate(enemyEntityPrefab);
+			var player = Instantiate(playerEntityPrefab, playerSpawnPoint.position, playerSpawnPoint.rotation);
+			var enemy = Instantiate(enemyEntityPrefab, enemySpawnPoint.position, enemySpawnPoint.rotation);
 
 			_entities.Add(player);
 			_entities.Add(enemy);

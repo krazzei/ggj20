@@ -38,26 +38,26 @@ namespace Code
 		private void HealTarget(Entity target)
 		{
 			// TODO: wait for animations.
-			_myEntity.HealTarget(target);
-			FinishTurn();
+			var animationDuration = _myEntity.HealTarget(target);
+			FinishTurn(animationDuration);
 		}
 
 		private void DebuffTargetAttack(Entity target)
 		{
-			_myEntity.DebuffTargetAttack(target);
-			FinishTurn();
+			var duration = _myEntity.DebuffTargetAttack(target);
+			FinishTurn(duration);
 		}
 
 		private void BuffTargetHeal(Entity target)
 		{
-			_myEntity.BuffTargetHealing(target);
-			FinishTurn();
+			var duration = _myEntity.BuffTargetHealing(target);
+			FinishTurn(duration);
 		}
 
 		private void ShieldTarget(Entity target)
 		{
-			_myEntity.ShieldTarget(target);
-			FinishTurn();
+			var duration = _myEntity.ShieldTarget(target);
+			FinishTurn(duration);
 		}
 
 		private void StunTarget(Entity target)
@@ -76,19 +76,19 @@ namespace Code
 			_finishedTurn = finishedTurn;
 		}
 
-		private void FinishTurn()
+		private void FinishTurn(float animationDuration)
 		{
 			foreach (var button in _buttons)
 			{
 				button.gameObject.SetActive(false);
 			}
 
-			StartCoroutine(TurnAnimation());
+			StartCoroutine(TurnAnimation(animationDuration));
 		}
 
-		private IEnumerator TurnAnimation()
+		private IEnumerator TurnAnimation(float duration)
 		{
-			yield return new WaitForSeconds(1f);
+			yield return new WaitForSeconds(duration);
 
 			_finishedTurn();
 		}

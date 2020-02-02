@@ -62,10 +62,10 @@ namespace Code
 
 		private void DoTurn()
 		{
-			StartCoroutine(TurnAnimation());
 			var randomWeight = Random.Range(0f, 1f);
 			var totalWeight = 0f;
 			AttackType selectedAttack = null;
+			float attackAnimationDuration = 1f;
 			foreach (var attackType in _attackTypes)
 			{
 				if (randomWeight < attackType.weight + totalWeight)
@@ -80,12 +80,12 @@ namespace Code
 			switch (selectedAttack?.type)
 			{
 				case EnemyAttackType.Single:
-					_myEntity.DamageTarget(_myEntity, selectedAttack.damageMultiplier);
+					attackAnimationDuration = _myEntity.DamageTarget(_myEntity, selectedAttack.damageMultiplier);
 					break;
 				case EnemyAttackType.AreaOfEffect:
 					foreach (var entity in _allEntities)
 					{
-						_myEntity.DamageTarget(entity, selectedAttack.damageMultiplier);
+						attackAnimationDuration = _myEntity.DamageTarget(entity, selectedAttack.damageMultiplier);
 					}
 					break;
 				case EnemyAttackType.Others:
@@ -93,12 +93,12 @@ namespace Code
 					{
 						if (entity != _myEntity)
 						{
-							_myEntity.DamageTarget(entity, selectedAttack.damageMultiplier);
+							attackAnimationDuration = _myEntity.DamageTarget(entity, selectedAttack.damageMultiplier);
 						}
 					}
 					break;
 				case EnemyAttackType.Player:
-					_myEntity.DamageTarget(_player, selectedAttack.damageMultiplier);
+					attackAnimationDuration = _myEntity.DamageTarget(_player, selectedAttack.damageMultiplier);
 					break;
 				case null:
 					break;
@@ -106,12 +106,14 @@ namespace Code
 					Debug.Log($"Unknown attack type {selectedAttack.type}");
 					break;
 			}
+			
+			StartCoroutine(TurnAnimation(attackAnimationDuration));
 		}
 
-		private IEnumerator TurnAnimation()
+		private IEnumerator TurnAnimation(float duration)
 		{
 			// TODO: use animation time
-			yield return new WaitForSeconds(1.0f);
+			yield return new WaitForSeconds(duration);
 			_finishedTurn();
 		}
 	}

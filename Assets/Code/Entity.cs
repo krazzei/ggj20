@@ -1,11 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
 namespace Code
 {
-	[RequireComponent(typeof(AudioSource))]
+	[RequireComponent(typeof(AudioSource), typeof(Animation))]
 	public class Entity : MonoBehaviour
 	{
 		// TODO: move these to different files.
@@ -38,6 +39,8 @@ namespace Code
 		private float _damageMultiplier = 1;
 		private float _healMultiplier = 1;
 		private float _damageMitigation = 1;
+
+		private Animation _animation;
 
 		private readonly List<StatusEffect> _activeEffects = new List<StatusEffect>();
 		private readonly Queue<StatusEffect> _queuedEffects = new Queue<StatusEffect>();
@@ -75,6 +78,18 @@ namespace Code
 		[SerializeField]
 		private List<AudioClip> _damageSounds = new List<AudioClip>();
 
+		[SerializeField]
+		private AnimationClip _attack;
+		
+		[SerializeField]
+		private AnimationClip _idle;
+		
+		[SerializeField]
+		private AnimationClip _hit;
+		
+		[SerializeField]
+		private AnimationClip _buff;
+
 		public string displayName;
 
 		public event Action OnDeath;
@@ -86,6 +101,7 @@ namespace Code
 		private void Awake()
 		{
 			_source = GetComponent<AudioSource>();
+			_animation = GetComponent<Animation>();
 		}
 
 		private void Start()
@@ -94,40 +110,52 @@ namespace Code
 			PublishHealthPercent();
 		}
 
-		public void HealTarget(Entity target)
+		public float HealTarget(Entity target)
 		{
 			_source.PlayOneShot(_healSounds[Random.Range(0, _healSounds.Count)]);
-			target.TakeHeal((byte)(healAmount * _healMultiplier));
+			StartCoroutine(PlayAnimationThenReturnToIdle(_attack));
+			target.TakeHeal(healAmount * _healMultiplier);
+			return _attack.length;
 		}
 
-		public void DamageTarget(Entity target, float damageMultiplier)
+		public float DamageTarget(Entity target, float damageMultiplier)
 		{
 			_source.PlayOneShot(_attackSounds[Random.Range(0, _attackSounds.Count)]);
+			StartCoroutine(PlayAnimationThenReturnToIdle(_attack));
 			target.TakeDamage((byte)(damageAmount * damageMultiplier * _damageMultiplier));
+			return _attack.length;
 		}
 
-		public void DebuffTargetAttack(Entity target)
+		public float DebuffTargetAttack(Entity target)
 		{
 			debuffDamage.EffectType = StatusType.Attacking;
+			StartCoroutine(PlayAnimationThenReturnToIdle(_attack));
 			target.QueueStatusEffect(debuffDamage);
+			return _attack.length;
 		}
 
-		public void BuffTargetAttack(Entity target)
+		public float BuffTargetAttack(Entity target)
 		{
 			buffDamage.EffectType = StatusType.Attacking;
+			StartCoroutine(PlayAnimationThenReturnToIdle(_buff));
 			target.QueueStatusEffect(buffDamage);
+			return _buff.length;
 		}
 
-		public void BuffTargetHealing(Entity target)
+		public float BuffTargetHealing(Entity target)
 		{
 			buffHeal.EffectType = StatusType.Healing;
+			StartCoroutine(PlayAnimationThenReturnToIdle(_buff));
 			target.QueueStatusEffect(buffHeal);
+			return _buff.length;
 		}
 
-		public void ShieldTarget(Entity target)
+		public float ShieldTarget(Entity target)
 		{
 			shield.EffectType = StatusType.Mitigation;
+			StartCoroutine(PlayAnimationThenReturnToIdle(_buff));
 			target.QueueStatusEffect(shield);
+			return _buff.length;
 		}
 
 		public void StunTarget(Entity target)
@@ -173,6 +201,7 @@ namespace Code
 		/// <param name="amount"></param>
 		private void TakeHeal(float amount)
 		{
+			StartCoroutine(PlayAnimationThenReturnToIdle(_hit));
 			_health += amount;
 			if (_health >= maxHealth)
 			{
@@ -189,6 +218,7 @@ namespace Code
 		/// <param name="amount"></param>
 		private void TakeDamage(float amount)
 		{
+			StartCoroutine(PlayAnimationThenReturnToIdle(_hit));
 			amount *= _damageMitigation;
 			_source.PlayOneShot(_damageSounds[Random.Range(0, _damageSounds.Count)]);
 			_health -= amount;
@@ -246,6 +276,13 @@ namespace Code
 				default:
 					throw new ArgumentOutOfRangeException();
 			}
+		}
+
+		private IEnumerator PlayAnimationThenReturnToIdle(AnimationClip animationClip)
+		{
+			_animation.CrossFade(animationClip.name, 0.1f);
+			yield return new WaitForSeconds(animationClip.length + 0.1f);
+			_animation.CrossFade(_idle.name, 0.1f);
 		}
 	}
 }
