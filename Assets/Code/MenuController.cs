@@ -19,12 +19,12 @@ namespace Code
 			_myEntity = entity;
 			CreateButton(_myEntity, BuffTargetHeal, "Buff {0}");
 			CreateButton(_myEntity, ShieldTarget, "Shield {0}");
-			CreateButton(_myEntity, HealTarget, "Heal {0}");
+			CreateButton(_myEntity, HealTarget, "Repair {0}");
 		}
 
 		public void AddTargetEntity(Entity entity)
 		{
-			CreateButton(entity, HealTarget, "Heal {0}");
+			CreateButton(entity, HealTarget, "Repair {0}");
 			CreateButton(entity, DebuffTargetAttack, "Debuff {0}");
 			CreateButton(entity, ShieldTarget, "Shield {0}");
 		}
