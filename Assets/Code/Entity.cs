@@ -36,6 +36,7 @@ namespace Code
 
 		public event Action OnDeath;
 		public event Action OnFullHealth;
+		public event Action<float> UpdateHealthPercent;
 
 		private void Awake()
 		{
@@ -45,6 +46,7 @@ namespace Code
 		private void Start()
 		{
 			_health = startingHealth;
+			PublishHealthPercent();
 		}
 
 		public void HealTarget(Entity target)
@@ -57,7 +59,13 @@ namespace Code
 		public void DamageTarget(Entity target)
 		{
 			Debug.Log($"{displayName} is damaging {target.displayName}");
+			_source.PlayOneShot(_attackSounds[Random.Range(0, _attackSounds.Count)]);
 			target.TakeDamage(damageAmount);
+		}
+
+		public void PublishHealthPercent()
+		{
+			UpdateHealthPercent?.Invoke(_health / maxHealth);
 		}
 
 		/// <summary>
@@ -72,6 +80,8 @@ namespace Code
 				_health = maxHealth;
 				OnFullHealth?.Invoke();
 			}
+
+			PublishHealthPercent();
 
 			Debug.Log($"{displayName}'s health: {_health}");
 		}
@@ -90,6 +100,8 @@ namespace Code
 				OnDeath?.Invoke();
 			}
 
+			PublishHealthPercent();
+			
 			Debug.Log($"{displayName}'s health: {_health}");
 		}
 	}

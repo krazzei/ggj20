@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2408073584255128758
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2408073584255128756}
+  - component: {fileID: 2408073584255128759}
+  m_Layer: 0
+  m_Name: TurnBasedBattleSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2408073584255128756
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2408073584255128758}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -6.1792216, y: -0.18527658, z: -7.8738356}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2408073584255128759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2408073584255128758}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a398a0e7065ed460cb01068e936ea4c3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerEntityPrefab: {fileID: 6192012770912983520, guid: 942cfa167d26d49f59dec25a1c340e34,
+    type: 3}
+  enemyEntityPrefab: {fileID: 6880055434894483684, guid: 293da3a6801884cdb8bf47d65ad927d4,
+    type: 3}
+  menuControllerPrefab: {fileID: 3088671910759656104, guid: 07ac93d8a16404d1ebc51a11f1a47db9,
+    type: 3}
+  aiControllerPrefab: {fileID: 1051709649800894059, guid: 817b719647d184d3f8cf9d096dc725f7,
+    type: 3}
+  healthBarPrefab: {fileID: -4283475258704085603, guid: 505d01420355d44cb85baa73fda9f4ee,
+    type: 3}

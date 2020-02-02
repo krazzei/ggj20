@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -48,6 +49,13 @@ namespace Code
 			{
 				button.gameObject.SetActive(false);
 			}
+
+			StartCoroutine(TurnAnimation());
+		}
+
+		private IEnumerator TurnAnimation()
+		{
+			yield return new WaitForSeconds(1f);
 
 			_finishedTurn();
 		}

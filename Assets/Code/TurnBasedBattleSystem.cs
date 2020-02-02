@@ -15,6 +15,8 @@ namespace Code
 		public AiController aiControllerPrefab;
 		private AiController _aiController;
 
+		public HealthBar healthBarPrefab;
+
 		private readonly List<Entity> _entities = new List<Entity>();
 		private readonly List<IController> _controllers = new List<IController>();
 		private int _controllerIndex;
@@ -39,6 +41,18 @@ namespace Code
 
 			_aiController = Instantiate(aiControllerPrefab);
 			_aiController.SetControlledEntity(enemy);
+
+			var playerHealth = Instantiate(healthBarPrefab, _menuController.transform, false);
+			playerHealth.SetPosition(new Vector2(0, 0), 
+				new Vector2(0, 0), 
+				new Vector2(260, 40));
+			player.UpdateHealthPercent += playerHealth.UpdateHealthPercent;
+
+			var enemyHealth = Instantiate(healthBarPrefab, _menuController.transform, false);
+			enemyHealth.SetPosition(new Vector2(0, 1), 
+				new Vector2(0, 1),
+				new Vector2(260, -40));
+			enemy.UpdateHealthPercent += enemyHealth.UpdateHealthPercent;
 
 			foreach (var entity in _entities)
 			{

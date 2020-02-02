@@ -5,12 +5,25 @@ using UnityEngine;
 
 namespace Code
 {
+	public enum EnemyAttackType
+	{
+		Single,
+		AreaOfEffect,
+	}
+
+	public class AttackType
+	{
+		public EnemyAttackType Type;
+		public float DamageModifier;
+	}
+	
 	public class AiController : MonoBehaviour, IController
 	{
 		private Action _finishedTurn;
 		private Entity _myEntity;
 
 		private readonly List<Entity> _allEntities = new List<Entity>();
+		
 
 		public void TakeTurn(Action finishedTurn)
 		{
