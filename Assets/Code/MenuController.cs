@@ -26,6 +26,7 @@ namespace Code
 		{
 			CreateButton(entity, HealTarget, "Heal {0}");
 			CreateButton(entity, DebuffTargetAttack, "Debuff {0}");
+			CreateButton(entity, ShieldTarget, "Shield {0}");
 		}
 
 		private void CreateButton(Entity target, Action<Entity> action, string displayTextFormat)
@@ -37,7 +38,6 @@ namespace Code
 
 		private void HealTarget(Entity target)
 		{
-			// TODO: wait for animations.
 			var animationDuration = _myEntity.HealTarget(target);
 			FinishTurn(animationDuration);
 		}

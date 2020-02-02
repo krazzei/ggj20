@@ -36,6 +36,12 @@ namespace Code
 		[SerializeField]
 		private List<AttackType> _attackTypes = new List<AttackType>();
 
+		private void Awake()
+		{
+			var time = DateTime.Now.Subtract(new DateTime(1970, 1, 1));
+			Random.InitState((int)time.TotalSeconds);
+		}
+
 		public void TakeTurn(Action finishedTurn)
 		{
 			_finishedTurn = finishedTurn;
