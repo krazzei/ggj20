@@ -16,6 +16,7 @@ namespace Code
 		private AiController _aiController;
 
 		public HealthBar healthBarPrefab;
+		public StatusEffectIcons statusEffectIconsPrefab;
 
 		private readonly List<Entity> _entities = new List<Entity>();
 		private readonly List<IController> _controllers = new List<IController>();
@@ -38,9 +39,11 @@ namespace Code
 
 			_menuController = Instantiate(menuControllerPrefab);
 			_menuController.SetControlledEntity(player);
+			_menuController.AddTargetEntity(enemy);
 
 			_aiController = Instantiate(aiControllerPrefab);
 			_aiController.SetControlledEntity(enemy);
+			_aiController.SetPlayerEntity(player);
 
 			var playerHealth = Instantiate(healthBarPrefab, _menuController.transform, false);
 			playerHealth.SetPosition(new Vector2(0, 0), 
@@ -48,17 +51,22 @@ namespace Code
 				new Vector2(260, 40));
 			player.UpdateHealthPercent += playerHealth.UpdateHealthPercent;
 
+			var playerIcons = Instantiate(statusEffectIconsPrefab, _menuController.transform, false);
+			playerIcons.SetPosition(new Vector2(0, 0), new Vector2(0, 0), new Vector2(260, 100));
+			player.OnAddStatusEffect += playerIcons.AddStatusEffect;
+			player.OnRemoveStatusEffect += playerIcons.RemoveStatusEffect;
+
 			var enemyHealth = Instantiate(healthBarPrefab, _menuController.transform, false);
-			enemyHealth.SetPosition(new Vector2(0, 1), 
-				new Vector2(0, 1),
-				new Vector2(260, -40));
+			enemyHealth.SetPosition(new Vector2(1, 1), 
+				new Vector2(1, 1),
+				new Vector2(-260, -40));
 			enemy.UpdateHealthPercent += enemyHealth.UpdateHealthPercent;
 
-			foreach (var entity in _entities)
-			{
-				_menuController.AddTargetEntity(entity);
-				_aiController.AddTargetEntity(entity);
-			}
+			// foreach (var entity in _entities)
+			// {
+			// 	_menuController.AddTargetEntity(entity);
+			// 	_aiController.AddTargetEntity(entity);
+			// }
 
 			_controllerIndex = 0;
 			_controllers.Add(_menuController);

@@ -8,6 +8,7 @@ namespace Code
 	[RequireComponent(typeof(AudioSource))]
 	public class Entity : MonoBehaviour
 	{
+		// TODO: move these to different files.
 		#region Supporting Types
 		public enum StatusType
 		{
@@ -23,6 +24,11 @@ namespace Code
 			public StatusType EffectType;
 			public float amount;
 			public int duration;
+
+			public StatusEffect Clone()
+			{
+				return new StatusEffect {EffectType = EffectType, amount = amount, duration = duration};
+			}
 		}
 		#endregion Supporting Types
 		
@@ -33,7 +39,8 @@ namespace Code
 		private float _healMultiplier = 1;
 		private float _damageMitigation = 1;
 
-		private List<StatusEffect> _activeEffects = new List<StatusEffect>();
+		private readonly List<StatusEffect> _activeEffects = new List<StatusEffect>();
+		private readonly Queue<StatusEffect> _queuedEffects = new Queue<StatusEffect>();
 
 		[SerializeField]
 		private float maxHealth = 100;
@@ -73,6 +80,8 @@ namespace Code
 		public event Action OnDeath;
 		public event Action OnFullHealth;
 		public event Action<float> UpdateHealthPercent;
+		public event Action<StatusEffect> OnAddStatusEffect;
+		public event Action<StatusEffect> OnRemoveStatusEffect;
 
 		private void Awake()
 		{
@@ -87,14 +96,12 @@ namespace Code
 
 		public void HealTarget(Entity target)
 		{
-			Debug.Log($"{displayName} is healing {target.displayName}");
 			_source.PlayOneShot(_healSounds[Random.Range(0, _healSounds.Count)]);
 			target.TakeHeal((byte)(healAmount * _healMultiplier));
 		}
 
 		public void DamageTarget(Entity target, float damageMultiplier)
 		{
-			Debug.Log($"{displayName} is damaging {target.displayName}");
 			_source.PlayOneShot(_attackSounds[Random.Range(0, _attackSounds.Count)]);
 			target.TakeDamage((byte)(damageAmount * damageMultiplier * _damageMultiplier));
 		}
@@ -102,25 +109,25 @@ namespace Code
 		public void DebuffTargetAttack(Entity target)
 		{
 			debuffDamage.EffectType = StatusType.Attacking;
-			target.AddStatusEffect(debuffDamage);
+			target.QueueStatusEffect(debuffDamage);
 		}
 
 		public void BuffTargetAttack(Entity target)
 		{
 			buffDamage.EffectType = StatusType.Attacking;
-			target.AddStatusEffect(buffDamage);
+			target.QueueStatusEffect(buffDamage);
 		}
 
 		public void BuffTargetHealing(Entity target)
 		{
 			buffHeal.EffectType = StatusType.Healing;
-			target.AddStatusEffect(buffHeal);
+			target.QueueStatusEffect(buffHeal);
 		}
 
 		public void ShieldTarget(Entity target)
 		{
-			buffHeal.EffectType = StatusType.Mitigation;
-			target.AddStatusEffect(shield);
+			shield.EffectType = StatusType.Mitigation;
+			target.QueueStatusEffect(shield);
 		}
 
 		public void StunTarget(Entity target)
@@ -128,6 +135,9 @@ namespace Code
 			throw new NotImplementedException("Do this");
 		}
 
+		/// <summary>
+		/// Happens at start of turn.
+		/// </summary>
 		public void Upkeep()
 		{
 			// I think stun will have to be a special case?
@@ -138,10 +148,18 @@ namespace Code
 				{
 					UnapplyStatusEffect(activeEffect);
 					markedForRemoval.Add(activeEffect);
+					OnRemoveStatusEffect?.Invoke(activeEffect);
 				}
 			}
 
 			markedForRemoval.ForEach(se => _activeEffects.Remove(se));
+
+			while (_queuedEffects.Count > 0)
+			{
+				var effect = _queuedEffects.Dequeue();
+				AddStatusEffect(effect);
+				OnAddStatusEffect?.Invoke(effect);
+			}
 		}
 
 		private void PublishHealthPercent()
@@ -163,8 +181,6 @@ namespace Code
 			}
 
 			PublishHealthPercent();
-
-			Debug.Log($"{displayName}'s health: {_health}");
 		}
 
 		/// <summary>
@@ -183,8 +199,11 @@ namespace Code
 			}
 
 			PublishHealthPercent();
-			
-			Debug.Log($"{displayName}'s health: {_health}");
+		}
+
+		private void QueueStatusEffect(StatusEffect effect)
+		{
+			_queuedEffects.Enqueue(effect.Clone());	
 		}
 
 		private void AddStatusEffect(StatusEffect effect)
@@ -202,7 +221,7 @@ namespace Code
 					_healMultiplier += effect.amount;
 					break;
 				case StatusType.Mitigation:
-					_damageMitigation += effect.amount;
+					_damageMitigation -= effect.amount;
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();
@@ -222,7 +241,7 @@ namespace Code
 					_healMultiplier -= effect.amount;
 					break;
 				case StatusType.Mitigation:
-					_damageMitigation -= effect.amount;
+					_damageMitigation += effect.amount;
 					break;
 				default:
 					throw new ArgumentOutOfRangeException();

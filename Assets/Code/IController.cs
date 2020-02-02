@@ -6,6 +6,5 @@ namespace Code
 	{
 		void TakeTurn(Action finishedTurn);
 		void SetControlledEntity(Entity entity);
-		void AddTargetEntity(Entity target);
 	}
 }

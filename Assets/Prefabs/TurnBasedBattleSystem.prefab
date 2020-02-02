@@ -53,3 +53,5 @@ MonoBehaviour:
     type: 3}
   healthBarPrefab: {fileID: -4283475258704085603, guid: 505d01420355d44cb85baa73fda9f4ee,
     type: 3}
+  statusEffectIconsPrefab: {fileID: 4106021496594252697, guid: 06ce370b11cfd487f9d9fc75a21baf7e,
+    type: 3}

@@ -17,12 +17,21 @@ namespace Code
 		public void SetControlledEntity(Entity entity)
 		{
 			_myEntity = entity;
+			CreateButton(_myEntity, BuffTargetHeal, "Buff {0}");
+			CreateButton(_myEntity, ShieldTarget, "Shield {0}");
+			CreateButton(_myEntity, HealTarget, "Heal {0}");
 		}
 
 		public void AddTargetEntity(Entity entity)
 		{
+			CreateButton(entity, HealTarget, "Heal {0}");
+			CreateButton(entity, DebuffTargetAttack, "Debuff {0}");
+		}
+
+		private void CreateButton(Entity target, Action<Entity> action, string displayTextFormat)
+		{
 			var targetButton = Instantiate(targetButtonPrefab, targetButtonRoot, false);
-			targetButton.InitializeButton(() => HealTarget(entity), $"Repair {entity.displayName}");
+			targetButton.InitializeButton(() => action(target), string.Format(displayTextFormat, target.displayName));
 			_buttons.Add(targetButton);
 		}
 
@@ -31,6 +40,29 @@ namespace Code
 			// TODO: wait for animations.
 			_myEntity.HealTarget(target);
 			FinishTurn();
+		}
+
+		private void DebuffTargetAttack(Entity target)
+		{
+			_myEntity.DebuffTargetAttack(target);
+			FinishTurn();
+		}
+
+		private void BuffTargetHeal(Entity target)
+		{
+			_myEntity.BuffTargetHealing(target);
+			FinishTurn();
+		}
+
+		private void ShieldTarget(Entity target)
+		{
+			_myEntity.ShieldTarget(target);
+			FinishTurn();
+		}
+
+		private void StunTarget(Entity target)
+		{
+			throw new NotImplementedException("Do this");
 		}
 
 		public void TakeTurn(Action finishedTurn)

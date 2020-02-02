@@ -6,16 +6,17 @@ using Random = UnityEngine.Random;
 
 namespace Code
 {
-	// With the new ability types we might want to have some more logic for deciding what is best for the Ai.
+	// TODO: With the new ability types we might want to have some more logic for deciding what is best for the Ai.
 	public class AiController : MonoBehaviour, IController
 	{
 		#region Supporting Types
-		// The AiController can just know who the player is... if that matters.
+		// TODO: The AiController can just know who the player is... if that matters.
 		private enum EnemyAttackType
 		{
 			Single,
 			AreaOfEffect,
-			Others
+			Others,
+			Player
 		}
 
 		[Serializable]
@@ -29,6 +30,7 @@ namespace Code
 		
 		private Action _finishedTurn;
 		private Entity _myEntity;
+		private Entity _player;
 
 		private readonly List<Entity> _allEntities = new List<Entity>();
 		[SerializeField]
@@ -44,6 +46,13 @@ namespace Code
 		public void SetControlledEntity(Entity entity)
 		{
 			_myEntity = entity;
+			_allEntities.Add(entity);
+		}
+
+		public void SetPlayerEntity(Entity player)
+		{
+			_player = player;
+			_allEntities.Add(player);
 		}
 
 		public void AddTargetEntity(Entity target)
@@ -55,12 +64,10 @@ namespace Code
 		{
 			StartCoroutine(TurnAnimation());
 			var randomWeight = Random.Range(0f, 1f);
-			Debug.Log($"random {randomWeight}");
 			var totalWeight = 0f;
 			AttackType selectedAttack = null;
 			foreach (var attackType in _attackTypes)
 			{
-				Debug.Log($"at weight {attackType.weight}");
 				if (randomWeight < attackType.weight + totalWeight)
 				{
 					selectedAttack = attackType;
@@ -68,7 +75,6 @@ namespace Code
 				}
 
 				totalWeight += attackType.weight;
-				Debug.Log($"total weight {totalWeight}");
 			}
 
 			switch (selectedAttack?.type)
@@ -90,6 +96,9 @@ namespace Code
 							_myEntity.DamageTarget(entity, selectedAttack.damageMultiplier);
 						}
 					}
+					break;
+				case EnemyAttackType.Player:
+					_myEntity.DamageTarget(_player, selectedAttack.damageMultiplier);
 					break;
 				case null:
 					break;
