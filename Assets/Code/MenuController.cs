@@ -39,6 +39,7 @@ namespace Code
 			{
 				button.gameObject.SetActive(true);
 			}
+			_myEntity.Upkeep();
 
 			_finishedTurn = finishedTurn;
 		}

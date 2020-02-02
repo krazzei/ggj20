@@ -43,3 +43,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8448fb1e67dd415ab7a044918e9ff405, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _attackTypes:
+  - type: 0
+    damageMultiplier: 1
+    weight: 0.6
+  - type: 1
+    damageMultiplier: 1.5
+    weight: 0.3
+  - type: 0
+    damageMultiplier: 2
+    weight: 0.1

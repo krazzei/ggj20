@@ -46,8 +46,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   healAmount: 10
-  damageAmount: 5
-  startingHealth: 10
+  damageAmount: 10
+  startingHealth: 15
+  debuffDamage:
+    amount: -0.5
+    duration: 2
+  buffDamage:
+    amount: 0.5
+    duration: 2
+  buffHeal:
+    amount: -0.5
+    duration: 2
+  shield:
+    amount: 0.5
+    duration: 2
   _healSounds:
   - {fileID: 8300000, guid: 9adeed2858a374858837cdb0d5869627, type: 3}
   - {fileID: 8300000, guid: 715016c7c7651425dbdc4f6c41dd53d2, type: 3}
